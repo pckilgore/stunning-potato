@@ -1,6 +1,6 @@
 export default function Verify() {
   return (
-    <div>
+    <div data-testid="verify-container">
       <h1>verify</h1>
     </div>
   );

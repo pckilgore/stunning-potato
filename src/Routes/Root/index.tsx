@@ -1,6 +1,6 @@
 export default function Root() {
   return (
-    <div>
+    <div data-testid="root-container">
       <h1>CLOUTY</h1>
     </div>
   );

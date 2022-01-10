@@ -8,7 +8,6 @@
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
     "@fortawesome/react-fontawesome": "^0.1.16",
-    "@headlessui/react": "^1.4.2",
     "@sentry/browser": "^6.13.3",
     "@supabase/supabase-js": "^1.25.1",
     "@tailwindui/react": "^0.1.1",
@@ -20,7 +19,6 @@
     "date-fns": "^2.25.0",
     "formik": "^2.2.9",
     "graphql": "^15.6.1",
-    "numeral": "^2.0.6",
     "react": "^17.0.2",
     "react-cool-onclickoutside": "^1.7.0",
     "react-dom": "^17.0.2",
@@ -50,26 +48,46 @@
     "@types/react-dom": "^17.0.0",
     "@types/react-router-dom": "^5.3.1",
     "autoprefixer": "^10.4.0",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^8.6.0",
+    "eslint-config-react-app": "^7.0.0",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
+    "eslint-plugin-react": "^7.28.0",
+    "eslint-plugin-react-hooks": "^4.3.0",
+    "husky": "^7.0.4",
+    "lint-staged": "^12.1.7",
     "node-sass": "^5.0.x",
     "postcss": "^8",
     "postcss-cli": "^9.0.2",
     "prettier": "^2.5.1",
     "react-scripts": "4.0.3",
+    "sass-lint": "^1.13.1",
     "tailwindcss": "^2.2.19"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "yarn run build:css && react-scripts build",
     "test": "react-scripts test --passWithNoTests",
+    "test:ci": "yarn test --ci --reporters=default --watchAll=false",
     "eject": "react-scripts eject",
     "build:css": "postcss src/tailwind.scss -o src/index.scss ",
     "watch:css": "postcss src/tailwind.scss -o src/index.scss --watch",
-    "gql:typegen": "graphql-codegen --config codegen.json"
+    "gql:typegen": "graphql-codegen --config codegen.json",
+    "format": "prettier --write .",
+    "lint": "eslint --cache --ext=.js,.jsx,.ts,.tsx src/",
+    "lint:sass": "sass-lint 'src/**/*.scss' -v -q"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix --cache --ext=.js,.jsx,.ts,.tsx",
+      "prettier --write"
+    ],
+    "*.{json,css,md}": [
+      "prettier --write"
+    ],
+    "*.{css,scss}": [
+      "sass-lint -v -q"
     ]
   },
   "browserslist": {

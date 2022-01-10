@@ -1,6 +1,6 @@
 export default function Register() {
   return (
-    <div>
+    <div data-testid="register-container">
       <h1>register</h1>
     </div>
   );
