@@ -1,0 +1,65 @@
+{
+  "overwrite": true,
+  "schema": ["schema.json"],
+  "documents": ["src/models/**/!(*.d).{ts,tsx}"],
+  "hooks": {
+    "afterOneFileWrite": "prettier --write"
+  },
+  "config": {
+    "scalars": {
+      "AWSDateTime": "string",
+      "AWSTimestamp": "number",
+      "AWSDate": "string",
+      "AWSTime": "string",
+      "AWSEmail": "string",
+      "AWSJSON": "unknown",
+      "AWSURL": "string",
+      "AWSPhone": "string",
+      "AWSIPAddress": "string",
+      "BigInt": "never",
+      "Double": "never"
+    }
+  },
+  "generates": {
+    "src/typegen/apollo-client-helpers.ts": {
+      "plugins": [
+        "typescript-apollo-client-helpers",
+        "fragment-matcher",
+        "add"
+      ],
+      "config": {
+        "content": [
+          "/* eslint-disable @typescript-eslint/no-explicit-any */",
+          "/** **************************************************",
+          " *    GENERATED FILE - DO NOT MANUALLY EDIT          *",
+          " ****************************************************/\n"
+        ]
+      }
+    },
+    "src/typegen/schema.ts": {
+      "plugins": ["typescript", "typescript-operations", "add"],
+      "config": {
+        "content": [
+          "/* eslint-disable @typescript-eslint/no-explicit-any */",
+          "/** **************************************************",
+          " *    GENERATED FILE - DO NOT MANUALLY EDIT          *",
+          " ****************************************************/\n"
+        ],
+        "skipTypeNameForRoot": true,
+        "avoidOptionals": {
+          "field": true,
+          "object": true,
+          "inputValue": false,
+          "defaultValue": false
+        },
+        "strictScalars": true,
+        "reactApolloVersion": 3,
+        "dedupeFragments": true,
+        "nonOptionalTypename": true,
+        "apolloReactCommonImportFrom": "@apollo/client",
+        "apolloReactHooksImportFrom": "@apollo/client",
+        "gqlImport": "@apollo/client#gql"
+      }
+    }
+  }
+}
