@@ -37,7 +37,7 @@
     "@graphql-codegen/typescript-apollo-client-helpers": "2.1.6",
     "@graphql-codegen/typescript-operations": "2.1.8",
     "@graphql-codegen/typescript-react-apollo": "3.1.6",
-    "@tailwindcss/forms": "^0.3.4",
+    "@tailwindcss/forms": "^0.4.0",
     "@testing-library/dom": "^8.11.1",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
@@ -47,9 +47,9 @@
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "@types/react-router-dom": "^5.3.1",
-    "autoprefixer": "^10.4.0",
+    "autoprefixer": "^10.4.2",
     "babel-eslint": "^10.1.0",
-    "eslint": "^8.6.0",
+    "eslint": "^7.11.0",
     "eslint-config-react-app": "^7.0.0",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-jsx-a11y": "^6.5.1",
@@ -57,13 +57,12 @@
     "eslint-plugin-react-hooks": "^4.3.0",
     "husky": "^7.0.4",
     "lint-staged": "^12.1.7",
-    "node-sass": "^5.0.x",
     "postcss": "^8",
     "postcss-cli": "^9.0.2",
     "prettier": "^2.5.1",
     "react-scripts": "4.0.3",
-    "sass-lint": "^1.13.1",
-    "tailwindcss": "^2.2.19"
+    "sass": "^1.47.0",
+    "tailwindcss": "^3.0.12"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -76,7 +75,9 @@
     "gql:typegen": "graphql-codegen --config codegen.json",
     "format": "prettier --write .",
     "lint": "eslint --cache --ext=.js,.jsx,.ts,.tsx src/",
-    "lint:sass": "sass-lint 'src/**/*.scss' -v -q"
+    "compile": "tsc",
+    "typecheck": "tsc --noEmit",
+    "typecheck:watch": "tsc --noEmit --watch"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
@@ -85,9 +86,6 @@
     ],
     "*.{json,css,md}": [
       "prettier --write"
-    ],
-    "*.{css,scss}": [
-      "sass-lint -v -q"
     ]
   },
   "browserslist": {

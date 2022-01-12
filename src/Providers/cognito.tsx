@@ -16,6 +16,19 @@ interface CognitoContextInterface {
   verify: (username: string, code: string) => Promise<any>;
 }
 
+const defaultContext: CognitoContextInterface = {
+  loading: true,
+  signedIn: false,
+  user: null,
+  resendSignUp: () => new Promise(() => {}),
+  signInApple: () => new Promise(() => {}),
+  signInGoogle: () => new Promise(() => {}),
+  signIn: () => new Promise(() => {}),
+  signOut: () => new Promise(() => {}),
+  signUp: () => new Promise(() => {}),
+  verify: () => new Promise(() => {})
+};
+
 const CognitoContext = React.createContext<CognitoContextInterface | undefined>(
   undefined
 );
@@ -158,4 +171,18 @@ export async function getToken() {
   } catch (err) {
     console.log("ERR", err);
   }
+}
+
+export function TestProvider({
+  value,
+  children
+}: {
+  value?: Partial<CognitoContextInterface>;
+  children: React.ReactNode;
+}) {
+  return (
+    <CognitoContext.Provider value={{ ...defaultContext, ...value }}>
+      {children}
+    </CognitoContext.Provider>
+  );
 }

@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen } from "utils/test/render";
 import Register from "./";
 
 describe("<Register />", () => {

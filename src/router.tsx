@@ -23,21 +23,23 @@ export default function Router() {
   return (
     <BrowserRouter>
       <React.Suspense fallback={null}>
-        <Routes>
-          <Route
-            path={`/dashboard/*`}
-            element={
-              <RequireAuth signedIn={signedIn} user={user}>
-                <Dashboard />
-              </RequireAuth>
-            }
-          />
-          ;
-          <Route path={`/verify`} element={<Verify />} />;
-          <Route path={`/login`} element={<Login />} />;
-          <Route path={`/register`} element={<Register />} />;
-          <Route path={`/`} element={<Root />} />;
-        </Routes>
+        <div className="min-h-screen">
+          <Routes>
+            <Route
+              path={`/dashboard/*`}
+              element={
+                <RequireAuth signedIn={signedIn} user={user}>
+                  <Dashboard />
+                </RequireAuth>
+              }
+            />
+            ;
+            <Route path={`/verify`} element={<Verify />} />;
+            <Route path={`/login`} element={<Login />} />;
+            <Route path={`/register`} element={<Register />} />;
+            <Route path={`/`} element={<Root />} />;
+          </Routes>
+        </div>
       </React.Suspense>
     </BrowserRouter>
   );

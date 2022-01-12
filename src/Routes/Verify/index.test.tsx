@@ -1,7 +1,7 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen } from "utils/test/render";
 import Verify from "./";
 
-describe("<Login />", () => {
+describe("<Verify />", () => {
   test("to render verify text", () => {
     render(<Verify />);
     expect(screen.getByTestId("verify-container")).toHaveTextContent("verify");

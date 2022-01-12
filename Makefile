@@ -2,11 +2,11 @@ include .env
 .PHONY := default init info install env env-push
 .DEFAULT_GOAL := default
 
-AWS ?= AWS_PROFILE=clouty AWS_REGION=us-east-1 aws
+AWS ?= AWS_REGION=us-east-1 aws
 AWS_ENV_BUCKET = clouty-environments
 SHELL := /bin/bash
-PROJECT_NAME ?= ${TF_VAR_project_name}
-TERRAFORM ?= AWS_PROFILE=clouty terraform
+PROJECT_NAME ?= web
+TERRAFORM ?= terraform
 
 default:
 	@ mmake help
@@ -29,9 +29,21 @@ install:
 build:
 	@ yarn build
 
+# lint project
+lint:
+	@ yarn lint
+
 # test project
 test:
-	@ CI=true yarn test
+	@ yarn test
+
+# test project ci/cd
+test-ci:
+	@ yarn test:ci
+
+# typescript compile project
+compile:
+	@ yarn compile
 
 env:
 	@ ${AWS} s3 cp s3://${AWS_ENV_BUCKET}/${PROJECT_NAME}/.env .env
@@ -60,19 +72,19 @@ gen-types: schema |
 tf-init:
 	$(eval TARGET_ENV=$(filter-out $@, $(MAKECMDGOALS)))
 	$(if ${TARGET_ENV},@true,$(error "TARGET_ENV is required"))
-	cd terraform/${TARGET_ENV} && terraform init
+	cd terraform/${TARGET_ENV} && ${TERRAFORM} init -migrate-state -backend-config=./default_backend.conf -upgrade
 
 # terraform plan TARGET_ENV
 tf-plan:
 	$(eval TARGET_ENV=$(filter-out $@, $(MAKECMDGOALS)))
 	$(if ${TARGET_ENV},@true,$(error "TARGET_ENV is required"))
-	cd terraform/${TARGET_ENV} && terraform plan
+	cd terraform/${TARGET_ENV} && ${TERRAFORM} plan
 
 # terraform apply TARGET_ENV
 tf-apply:
 	$(eval TARGET_ENV=$(filter-out $@, $(MAKECMDGOALS)))
 	$(if ${TARGET_ENV},@true,$(error "TARGET_ENV is required"))
-	cd terraform/${TARGET_ENV} && terraform apply
+	cd terraform/${TARGET_ENV} && ${TERRAFORM} apply
 
 %:
 	@ true
