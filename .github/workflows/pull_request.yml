@@ -33,7 +33,7 @@ jobs:
       - name: Test
         run: make test-ci
       - name: Build
-        run: make build
+        run: make build-staging
       - name: Notify Slack
         uses: 8398a7/action-slack@v3
         with:

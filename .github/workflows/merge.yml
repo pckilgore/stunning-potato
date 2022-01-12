@@ -40,7 +40,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
-          make build
+          make build-staging
           aws s3 sync build s3://${{ secrets.AWS_STAGING_BUCKET_NAME }}/ --delete
       - name: Bust Cache - Staging
         env:

@@ -25,9 +25,13 @@ init: | env install
 install:
 	@ yarn --prefer-offline
 
-# build project
-build:
-	@ yarn build
+# build project - production
+build-production:
+	@ REACT_APP_ENV=production yarn build
+
+# build project - staging
+build-staging:
+	@ REACT_APP_ENV=staging yarn build
 
 # lint project
 lint:
@@ -47,18 +51,18 @@ compile:
 
 env:
 	@ ${AWS} s3 cp s3://${AWS_ENV_BUCKET}/${PROJECT_NAME}/.env .env
-	@ ${AWS} s3 cp s3://${AWS_ENV_BUCKET}/${PROJECT_NAME}/.env.development.local .env.development.local
-	@ ${AWS} s3 cp s3://${AWS_ENV_BUCKET}/${PROJECT_NAME}/.env.staging.local .env.staging.local
-	@ ${AWS} s3 cp s3://${AWS_ENV_BUCKET}/${PROJECT_NAME}/.env.test.local .env.test.local
-	@ ${AWS} s3 cp s3://${AWS_ENV_BUCKET}/${PROJECT_NAME}/.env.production.local .env.production.local
+	@ ${AWS} s3 cp s3://${AWS_ENV_BUCKET}/${PROJECT_NAME}/.env.development .env.development
+	@ ${AWS} s3 cp s3://${AWS_ENV_BUCKET}/${PROJECT_NAME}/.env.staging .env.staging
+	@ ${AWS} s3 cp s3://${AWS_ENV_BUCKET}/${PROJECT_NAME}/.env.test .env.test
+	@ ${AWS} s3 cp s3://${AWS_ENV_BUCKET}/${PROJECT_NAME}/.env.production .env.production
 	
 # push environment files
 env-push:
 	@ ${AWS} s3 cp .env s3://${AWS_ENV_BUCKET}/${PROJECT_NAME}/.env --sse
-	@ ${AWS} s3 cp .env.development.local s3://${AWS_ENV_BUCKET}/${PROJECT_NAME}/.env.development.local --sse
-	@ ${AWS} s3 cp .env.staging.local s3://${AWS_ENV_BUCKET}/${PROJECT_NAME}/.env.staging.local --sse
-	@ ${AWS} s3 cp .env.test.local s3://${AWS_ENV_BUCKET}/${PROJECT_NAME}/.env.test.local --sse
-	@ ${AWS} s3 cp .env.production.local s3://${AWS_ENV_BUCKET}/${PROJECT_NAME}/.env.production.local --sse
+	@ ${AWS} s3 cp .env.development s3://${AWS_ENV_BUCKET}/${PROJECT_NAME}/.env.development --sse
+	@ ${AWS} s3 cp .env.staging s3://${AWS_ENV_BUCKET}/${PROJECT_NAME}/.env.staging --sse
+	@ ${AWS} s3 cp .env.test s3://${AWS_ENV_BUCKET}/${PROJECT_NAME}/.env.test --sse
+	@ ${AWS} s3 cp .env.production s3://${AWS_ENV_BUCKET}/${PROJECT_NAME}/.env.production --sse
 
 # fetch graphql schema
 schema:
