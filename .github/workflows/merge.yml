@@ -21,16 +21,13 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Setup Environment
         run: sudo snap install aws-cli --classic
-      - name: Initialize
+      - name: Install
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
-          make init
+          make install
       - name: Run Test Suite
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           make test-ci
       - name: Build & Deploy - Staging
@@ -40,7 +37,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
-          make build-staging
+          make env-staging
+          make build
           aws s3 sync build s3://${{ secrets.AWS_STAGING_BUCKET_NAME }}/ --delete
       - name: Bust Cache - Staging
         env:
@@ -54,7 +52,7 @@ jobs:
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
-          fields: repo,message,commit,author,workflow,pullRequest # selectable (default: repo,message)
+          fields: repo,message,commit,author,workflow # selectable (default: repo,message)
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         if: always()

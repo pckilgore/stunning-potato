@@ -1,5 +1,8 @@
 include .env
-.PHONY := default init info install env env-push
+.PHONY := default init info install env env-push env-staging \
+					env-production build lint test test-ci compile \
+					schema gen-types tf-init tf-plan tf-apply
+
 .DEFAULT_GOAL := default
 
 AWS ?= AWS_REGION=us-east-1 aws
@@ -25,13 +28,9 @@ init: | env install
 install:
 	@ yarn --prefer-offline
 
-# build project - production
-build-production:
-	@ REACT_APP_ENV=production yarn build
-
-# build project - staging
-build-staging:
-	@ REACT_APP_ENV=staging yarn build
+# build project
+build:
+	@ yarn build
 
 # lint project
 lint:
@@ -49,6 +48,7 @@ test-ci:
 compile:
 	@ yarn compile
 
+# fetch environment files
 env:
 	@ ${AWS} s3 cp s3://${AWS_ENV_BUCKET}/${PROJECT_NAME}/.env .env
 	@ ${AWS} s3 cp s3://${AWS_ENV_BUCKET}/${PROJECT_NAME}/.env.development .env.development
@@ -63,6 +63,16 @@ env-push:
 	@ ${AWS} s3 cp .env.staging s3://${AWS_ENV_BUCKET}/${PROJECT_NAME}/.env.staging --sse
 	@ ${AWS} s3 cp .env.test s3://${AWS_ENV_BUCKET}/${PROJECT_NAME}/.env.test --sse
 	@ ${AWS} s3 cp .env.production s3://${AWS_ENV_BUCKET}/${PROJECT_NAME}/.env.production --sse
+
+# fetch staging environment for build
+env-staging:
+	@ ${AWS} s3 cp s3://${AWS_ENV_BUCKET}/${PROJECT_NAME}/.env .env
+	@ ${AWS} s3 cp s3://${AWS_ENV_BUCKET}/${PROJECT_NAME}/.env.staging .env.production
+	
+# fetch production environment for build
+env-production:
+	@ ${AWS} s3 cp s3://${AWS_ENV_BUCKET}/${PROJECT_NAME}/.env .env
+	@ ${AWS} s3 cp s3://${AWS_ENV_BUCKET}/${PROJECT_NAME}/.env.production .env.production
 
 # fetch graphql schema
 schema:

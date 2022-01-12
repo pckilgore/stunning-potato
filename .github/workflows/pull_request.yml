@@ -21,19 +21,24 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Environment
         run: sudo snap install aws-cli --classic
-      - name: Initialize
+      - name: Install
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: make init
+        run: make install
       - name: Lint
         run: make lint
       - name: Compile
         run: make compile
       - name: Test
         run: make test-ci
-      - name: Build
-        run: make build-staging
+      - name: Build Staging
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          make env-staging
+          make build
       - name: Notify Slack
         uses: 8398a7/action-slack@v3
         with:
