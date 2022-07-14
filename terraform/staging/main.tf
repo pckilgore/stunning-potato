@@ -1,29 +1,40 @@
+terraform {
+  required_version = "~> 1.2.4"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 4.22.0"
+    }
+  }
+
+  backend "s3" {
+    bucket  = "clouty-terraform-backends"
+    key     = "us-east-1/staging/web/terraform.tfstate"
+    region  = "us-east-1"
+    encrypt = true
+  }
+}
+
 provider "aws" {
   region = "us-east-1"
-}
 
-terraform {
-  # Passed in via CLI as `-backend-config=./default_backend.conf` or `-backend-config="key=value"`
-  # See https://www.terraform.io/docs/language/settings/backends/configuration.html#partial-configuration
-  backend "s3" {}
-}
-
-variable "environment" {
-  default = "staging"
-}
-
-variable "subdomain" {
-  default = "staging.app"
+  default_tags {
+    tags = {
+      management = "Terraform"
+      repo       = "github.com/cloutyskies/pck-web-next"
+    }
+  }
 }
 
 module "web" {
   source = "../blocks"
 
-  domain       = var.domain
-  subdomain    = var.subdomain
-  environment  = var.environment
-  project_name = var.project_name
-  org_name     = var.org_name
-  aws_region   = var.aws_region
-}
+  aws_region   = "us-east-1"
+  environment  = "staging"
+  org_name     = "clouty"
+  project_name = "web"
 
+  domain    = "clouty.io"
+  subdomain = "staging.app"
+}

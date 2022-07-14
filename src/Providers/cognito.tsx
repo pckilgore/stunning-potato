@@ -2,67 +2,54 @@ import React from "react";
 import Auth from "@aws-amplify/auth";
 import { CognitoHostedUIIdentityProvider } from "@aws-amplify/auth/lib/types";
 import { CognitoUser } from "amazon-cognito-identity-js";
+import { config } from "../configuration";
 
-interface CognitoContextInterface {
-  loading: boolean;
-  signedIn: boolean;
-  resendSignUp: () => Promise<any>;
-  signInApple: () => Promise<CognitoUser>;
-  signInGoogle: () => Promise<CognitoUser>;
-  signIn: (email: string, password: string) => Promise<CognitoUser>;
-  signOut: () => Promise<any>;
-  signUp: (email: string, password: string) => Promise<any>;
-  user: any;
-  verify: (username: string, code: string) => Promise<any>;
-}
+const uninitializedCallback = <A, B>(a?: A, b?: B) => {
+  return Promise.reject(`Cognito is not initialized. ${a} ${b}`);
+};
 
-const defaultContext: CognitoContextInterface = {
+const defaultContext = {
   loading: true,
   signedIn: false,
   user: null,
-  resendSignUp: () => new Promise(() => {}),
-  signInApple: () => new Promise(() => {}),
-  signInGoogle: () => new Promise(() => {}),
-  signIn: () => new Promise(() => {}),
-  signOut: () => new Promise(() => {}),
-  signUp: () => new Promise(() => {}),
-  verify: () => new Promise(() => {})
+  resendSignUp: uninitializedCallback,
+  signInApple: uninitializedCallback,
+  signInGoogle: uninitializedCallback,
+  signIn: uninitializedCallback,
+  signOut: uninitializedCallback,
+  signUp: uninitializedCallback,
+  verify: uninitializedCallback,
 };
 
-const CognitoContext = React.createContext<CognitoContextInterface | undefined>(
-  undefined
-);
+// @tsignore
+// eslint-disable-next-line
+const CognitoContext = React.createContext<any>(undefined);
 
 interface CognitoState {
   loading: boolean;
   signedIn: boolean;
 }
 
-export function CognitoProvider(props: any) {
+export function CognitoProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = React.useState<CognitoState>({
     signedIn: false,
-    loading: true
+    loading: true,
   });
   const [user, setUser] = React.useState<CognitoUser | null>(null);
 
   const cognito = React.useMemo(() => {
     Auth.configure({
       Auth: {
-        region: process.env.REACT_APP_AWS_REGION,
-        userPoolId: process.env.REACT_APP_COGNITO_USER_POOL_ID,
-        userPoolWebClientId: process.env.REACT_APP_COGNITO_CLIENT_ID,
+        ...config.cognito,
         oauth: {
-          domain: process.env.REACT_APP_COGNITO_DOMAIN,
-          redirectSignIn: process.env.REACT_APP_COGNITO_REDIRECT_SIGN_IN,
-          redirectSignOut: process.env.REACT_APP_COGNITO_REDIRECT_SIGN_OUT,
+          ...config.cognito.oauth,
           scope: ["email", "openid"],
-          clientId: process.env.REACT_APP_COGNITO_CLIENT_ID,
-          responseType: "code"
-        }
+          responseType: "code",
+        },
       },
       Analytics: {
-        disabled: true
-      }
+        disabled: true,
+      },
     });
 
     return Auth;
@@ -71,64 +58,59 @@ export function CognitoProvider(props: any) {
   React.useEffect(() => {
     cognito
       .currentAuthenticatedUser()
-      .then((user: any) => {
-        setUser(user.username);
+      .then((user: unknown) => {
+        setUser(user as any);
         setState({
           loading: false,
-          signedIn: true
+          signedIn: true,
         });
       })
       .catch(() => setState({ loading: false, signedIn: false }));
   }, [cognito]);
 
-  const resendSignUp = (username: string): Promise<any> =>
-    cognito.resendSignUp(username);
+  const resendSignUp = (username: string) => cognito.resendSignUp(username);
 
-  const signIn = (username: string, password: string): Promise<any> =>
+  const signIn = (username: string, password: string) =>
     cognito.signIn(username, password);
 
   const signInApple = () =>
     cognito.federatedSignIn({
-      provider: CognitoHostedUIIdentityProvider.Apple
+      provider: CognitoHostedUIIdentityProvider.Apple,
     });
 
   const signInGoogle = () =>
     cognito.federatedSignIn({
-      provider: CognitoHostedUIIdentityProvider.Google
+      provider: CognitoHostedUIIdentityProvider.Google,
     });
 
-  const signOut = async (): Promise<any> => {
+  const signOut = async () => {
     await cognito.signOut();
     setUser(null);
     setState({ loading: false, signedIn: false });
   };
 
-  const signUp = async (username: string, password: string): Promise<any> =>
+  const signUp = async (username: string, password: string) =>
     cognito.signUp({
       username,
-      password
+      password,
     });
 
-  const verify = async (username: string, code: string): Promise<any> => {
-    try {
-      const response = await cognito.confirmSignUp(username, code);
+  const verify = async (username: string, code: string) => {
+    const response = await cognito.confirmSignUp(username, code);
 
-      if (response === "CONFIRMED SUCCESS") {
-        const user = await cognito
-          .currentAuthenticatedUser()
-          .then((user: any) => {
-            setUser(user.attributes);
+    if (response === "CONFIRMED SUCCESS") {
+      const user = await cognito
+        .currentAuthenticatedUser()
+        .then((user: unknown) => {
+          setUser(user as any);
 
-            return user.attributes;
-          });
+          return user;
+        });
 
-        return user;
-      }
-
-      throw new Error("Invalid authentication code.");
-    } catch (error: any) {
-      return error;
+      return user;
     }
+
+    throw new Error("Invalid authentication code.");
   };
 
   return (
@@ -142,10 +124,11 @@ export function CognitoProvider(props: any) {
         signUp,
         user,
         verify,
-        ...state
+        ...state,
       }}
-      {...props}
-    />
+    >
+      {children}
+    </CognitoContext.Provider>
   );
 }
 
@@ -160,24 +143,20 @@ export function useCognito() {
 }
 
 export async function getToken() {
-  try {
-    if (Auth) {
-      const session = await Auth.currentSession();
+  if (Auth) {
+    const session = await Auth.currentSession();
 
-      return session?.getAccessToken()?.getJwtToken();
-    }
-
-    return false;
-  } catch (err) {
-    console.log("ERR", err);
+    return session?.getAccessToken()?.getJwtToken();
   }
+
+  return "";
 }
 
 export function TestProvider({
   value,
-  children
+  children,
 }: {
-  value?: Partial<CognitoContextInterface>;
+  value?: object;
   children: React.ReactNode;
 }) {
   return (

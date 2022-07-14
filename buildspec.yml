@@ -1,0 +1,41 @@
+version: 0.2
+
+env:
+  variables:
+    YARN_CACHE_FOLDER: "./.yarn-cache"
+    CI: 1
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 16
+    commands:
+      - npm install --location=global yarn@^1.x.x
+      - sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
+      - yarn install --frozen-lockfile
+  pre_build:
+    commands:
+      - task info
+      - task env
+      - task typecheck
+      - task test
+  build:
+    commands:
+      # We Typecheck earlier
+      - task build:prod:dangerous
+      - task build:staging:dangerous
+
+artifacts:
+  secondary-artifacts:
+    StagingBuild:
+      files:
+        - "**/*"
+      base-directory: "$CODEBUILD_SRC_DIR/dist/staging"
+    ProductionBuild:
+      files:
+        - "**/*"
+      base-directory: "$CODEBUILD_SRC_DIR/dist/prod"
+
+cache:
+  paths:
+    - "./.yarn-cache/**/*"

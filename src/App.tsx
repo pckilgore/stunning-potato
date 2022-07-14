@@ -1,12 +1,10 @@
-import Providers from "Providers";
-import Router from "./router";
+import { CognitoProvider } from "./providers/cognito";
+import { Router } from "./router";
 
-function App() {
+export default function App() {
   return (
-    <Providers>
+    <CognitoProvider>
       <Router />
-    </Providers>
+    </CognitoProvider>
   );
 }
-
-export default App;

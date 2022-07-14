@@ -1,0 +1,145 @@
+version: "3"
+
+env:
+  AWS_REGION: us-east-1
+  AWS_ENV_BUCKET: clouty-environments
+  PROJECT_NAME: web
+  MISSING_TARGET_ENV_MSG: forgot to pass -- TARGET_ENV to cmd
+
+tasks:
+  init:
+    desc: Bootstrap project
+    cmds:
+      - task:info
+      - task:env
+      - task:install
+
+  dev:
+    desc: run a local dev server with typescript watch
+    cmds:
+      - yarn vite
+
+  storybook:
+    desc: Launch storybook for development
+    cmds:
+      - yarn start-storybook -p 6006
+
+  storybook:build:
+    desc: Build storybook for release
+    cmds:
+      - yarn build-storybook
+
+  build:prod:
+    desc: Production build + typecheck
+    cmds:
+      - task: typecheck
+      - task: build:prod:dangerous
+
+  build:staging:
+    desc: Production build + typecheck
+    cmds:
+      - task: typecheck
+      - task: build:staging:dangerous
+
+  build:prod:dangerous:
+    desc: Production build without typecheck
+    cmds:
+      - yarn vite build --mode production --outDir dist/prod
+
+  build:staging:dangerous:
+    desc: Staging build without typecheck
+    cmds:
+      - yarn vite build --mode staging --outDir dist/staging
+
+  test:
+    desc: Run tests defaults to watch locally, run-once in CI
+    cmds:
+      - yarn vitest
+
+  test:run:
+    desc: Force vitest to run tests once (regardless of environment)
+    cmds:
+      - yarn vitest run
+
+  test:ui:
+    desc: Run tests in pretty local UI
+    cmds:
+      - yarn vitest --ui
+
+  test:coverage:
+    desc: Show test coverage
+    cmds:
+      - yarn vitest run --coverage
+
+  typecheck:
+    desc: Run typescript compiler
+    cmds:
+      - cmd: yarn tsc --noEmit
+
+  typecheck:watch:
+    desc: run compiler for type checks in watch mode
+    cmds:
+      - cmd: yarn tsc --noEmit --watch
+        ignore_error: true
+
+  preview:
+    deps: [build]
+    cmds:
+      - yarn vite preview
+
+  install:
+    desc: Retrieve NPM dependencies
+    cmds:
+      - yarn install
+
+  env:
+    desc: Fetch environment files (requires correctly configured AWS credentials)
+    cmds:
+      - aws s3 cp s3://${AWS_ENV_BUCKET}/${PROJECT_NAME}/.env .env
+      - aws s3 cp s3://${AWS_ENV_BUCKET}/${PROJECT_NAME}/.env.development .env.development
+      - aws s3 cp s3://${AWS_ENV_BUCKET}/${PROJECT_NAME}/.env.staging .env.staging
+      - aws s3 cp s3://${AWS_ENV_BUCKET}/${PROJECT_NAME}/.env.test .env.test
+      - aws s3 cp s3://${AWS_ENV_BUCKET}/${PROJECT_NAME}/.env.production .env.production
+
+  env:push:
+    desc: push environment files
+    cmds:
+      - aws s3 cp .env s3://${AWS_ENV_BUCKET}/${PROJECT_NAME}/.env --sse
+      - aws s3 cp .env.development s3://${AWS_ENV_BUCKET}/${PROJECT_NAME}/.env.development --sse
+      - aws s3 cp .env.staging s3://${AWS_ENV_BUCKET}/${PROJECT_NAME}/.env.staging --sse
+      - aws s3 cp .env.test s3://${AWS_ENV_BUCKET}/${PROJECT_NAME}/.env.test --sse
+      - aws s3 cp .env.production s3://${AWS_ENV_BUCKET}/${PROJECT_NAME}/.env.production --sse
+
+  tf:init:
+    desc: terraform init TARGET_ENV (task tf-init -- production|staging)
+    cmds:
+      - if test -z "{{.CLI_ARGS}}"; then echo $MISSING_TARGET_ENV_MSG; exit 1; fi
+      - cd terraform/{{.CLI_ARGS}} && terraform init -migrate-state -backend-config=./default_backend.conf -upgrade
+
+  tf:plan:
+    desc: terraform plan TARGET_ENV
+    cmds:
+      - if test -z "{{.CLI_ARGS}}"; then echo $MISSING_TARGET_ENV_MSG; exit 1 fi
+      - cd terraform/{{.CLI_ARGS}} && terraform plan -o ./taskfile.tfplan
+
+  tf:apply:
+    desc: terraform apply TARGET_ENV
+    cmds:
+      - test -z "{{.CLI_ARGS}}" && echo $MISSING_TARGET_ENV_MSG && exit 1
+      - cd terraform/{{.CLI_ARGS}} && terraform apply taskfile.tfplan
+
+  info:
+    desc: Print out various key environment information.
+    cmds:
+      - echo "node $(node --version)"
+      - echo "npm $(npm --version)"
+      - echo "yarn $(yarn --version)"
+      - echo "aws $(aws --version)"
+
+  default:
+    desc: Complain if you aren't specfic
+    cmds:
+      - cmd: echo 'no task selected, use "task --list"'
+        silent: true
+      - cmd: exit 1
+        silent: true

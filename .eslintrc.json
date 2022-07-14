@@ -1,7 +1,16 @@
 {
-  "extends": ["react-app", "react-app/jest", "plugin:jsx-a11y/recommended"],
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:jsx-a11y/recommended",
+    "plugin:storybook/recommended"
+  ],
   "rules": {
-    "semi": 0,
-    "no-console": 0
+    "@typescript-eslint/no-explicit-any": "error"
   }
 }

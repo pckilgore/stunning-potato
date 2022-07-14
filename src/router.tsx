@@ -4,18 +4,18 @@ import {
   Navigate,
   Route,
   Routes,
-  useLocation
+  useLocation,
 } from "react-router-dom";
 
-import * as Cognito from "Providers/cognito";
+import * as Cognito from "./providers/cognito";
 
-const Login = React.lazy(() => import("Routes/Login"));
-const Dashboard = React.lazy(() => import("Routes/Dashboard"));
-const Register = React.lazy(() => import("Routes/Register"));
-const Verify = React.lazy(() => import("Routes/Verify"));
-const Root = React.lazy(() => import("Routes/Root"));
+const Login = React.lazy(() => import("./routes/auth/Login"));
+const Dashboard = React.lazy(() => import("./routes/auth/Dashboard"));
+const Register = React.lazy(() => import("./routes/auth/Register"));
+const Verify = React.lazy(() => import("./routes/auth/Verify"));
+const Root = React.lazy(() => import("./routes/auth/Root"));
 
-export default function Router() {
+export function Router() {
   const { loading, signedIn, user } = Cognito.useCognito();
 
   if (loading) return null;
@@ -33,7 +33,6 @@ export default function Router() {
                 </RequireAuth>
               }
             />
-            ;
             <Route path={`/verify`} element={<Verify />} />;
             <Route path={`/login`} element={<Login />} />;
             <Route path={`/register`} element={<Register />} />;
@@ -48,7 +47,7 @@ export default function Router() {
 interface Props {
   children: JSX.Element;
   signedIn: boolean;
-  user: any;
+  user: unknown;
 }
 
 function RequireAuth(props: Props) {
