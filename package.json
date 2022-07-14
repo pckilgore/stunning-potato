@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@aws-amplify/auth": "^4.5.9",
+    "clsx": "^1.2.1",
     "eslint-plugin-jsx-a11y": "^6.6.0",
     "formik": "^2.2.9",
     "postcss": "^8.4.14",

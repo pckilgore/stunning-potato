@@ -2,13 +2,45 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  html,
+  body,
+  #root {
+    @apply h-full;
+  }
+
+  h3 {
+    @apply font-serif;
+    @apply text-2.5xl;
+    @apply leading-38;
+  }
+}
+
+@font-face {
+  font-family: "Roslindale";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local(""), url(../font/Roslindale-DisplayRegular.woff2) format("woff2"),
+    url(../font/Roslindale-DisplayRegular.woff) format("woff");
+}
+
+@font-face {
+  font-family: "Roslindale";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local(""), url(../font/Roslindale-TextBold.woff2) format("woff2"),
+    url(../font/Roslindale-TextBold.woff) format("woff");
+}
+
 @font-face {
   font-family: "Inter";
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: local(""), url(../fonts/inter-regular.woff2) format("woff2"),
-    url(../fonts/inter-regular.woff) format("woff");
+  src: local(""), url(../font/inter-regular.woff2) format("woff2"),
+    url(../font/inter-regular.woff) format("woff");
 }
 
 @font-face {
@@ -16,15 +48,15 @@
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: local(""), url(../fonts/inter-600.woff2) format("woff2"),
-    url(../fonts/inter-600.woff) format("woff");
+  src: local(""), url(../font/inter-600.woff2) format("woff2"),
+    url(../font/inter-600.woff) format("woff");
 }
 
-@font-face {
+font-face {
   font-family: "Inter";
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: local(""), url(../fonts/inter-700.woff2) format("woff2"),
-    url(../fonts/inter-700.woff) format("woff");
+  src: local(""), url(../font/inter-700.woff2) format("woff2"),
+    url(../font/inter-700.woff) format("woff");
 }

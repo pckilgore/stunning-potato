@@ -4,6 +4,7 @@
 const defaultTheme = require("tailwindcss/defaultTheme");
 
 module.exports = {
+  darkMode: "class",
   content: ["./src/**/*.tsx", "./index.html"],
   theme: {
     colors: {
@@ -18,7 +19,7 @@ module.exports = {
         100: "#2F2041",
         50: "#261C30",
       },
-      grey: {
+      gray: {
         700: "#151318",
         600: "#747276",
         400: "#9F9EA0",
@@ -26,7 +27,7 @@ module.exports = {
         150: "#E8E7E8",
         50: "#F3F3F4",
       },
-      bg: {
+      background: {
         100: "#FAFAFA",
         200: "#FFF",
         300: "#F6F6F6",
@@ -47,7 +48,7 @@ module.exports = {
         // Reverse Scale (high number = lighter).
         // Means classnames should 1:1 map, e.g.: "bg-gray-700 dark:dark-bg-gray-700"
         // vs : "bg-gray-700 dark:dark-bg-gray-???"
-        grey: {
+        gray: {
           700: "#F3F3F4",
           600: "#A2A1A3",
           400: "#747276",
@@ -55,7 +56,7 @@ module.exports = {
           150: "#2A272C",
           50: "#232025",
         },
-        bg: {
+        background: {
           100: "#17141A",
           200: "#1E1A20",
           300: "#252027",
@@ -70,6 +71,16 @@ module.exports = {
       },
     },
     extend: {
+      fontSize: {
+        "2.5xl": "1.75rem",
+        button: ["0.8125rem", "1.25rem"],
+      },
+      lineHeight: {
+        38: "2.375rem",
+      },
+      backgroundImage: {
+        swirl: "url(../img/swirl.png)",
+      },
       fontFamily: {
         sans: ["Inter", ...defaultTheme.fontFamily.sans],
         serif: ["Roslindale", ...defaultTheme.fontFamily.serif],
@@ -86,5 +97,4 @@ module.exports = {
       },
     },
   },
-  plugins: [require("@tailwindcss/forms")],
 };
