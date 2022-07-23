@@ -10,27 +10,27 @@
     "@jridgewell/gen-mapping" "^0.1.0"
     "@jridgewell/trace-mapping" "^0.3.9"
 
-"@aws-amplify/auth@^4.5.9":
-  version "4.5.9"
-  resolved "https://registry.yarnpkg.com/@aws-amplify/auth/-/auth-4.5.9.tgz#5ecf8a6ba239e2fec3c98d21550dedbd7798d8f0"
-  integrity sha512-XufqVR+nW5VG/hUSkOpgWne8L3iC9T+2ntA8oU5mj+DJi169tamQXWIlpfG3R1ncz8DB2kYM+AnZZUhSJDhrFQ==
+"@aws-amplify/auth@^4.5.10":
+  version "4.5.10"
+  resolved "https://registry.yarnpkg.com/@aws-amplify/auth/-/auth-4.5.10.tgz#b8eb44ef2e557684b0c01e2271d42f51ab0919d4"
+  integrity sha512-G3p5nuFRZKoX4/5s9NSE+x3g0vmjkPhMjh3Gimzofvw8mn91YUUyQ1BfFvyfIKXUfAPZg22oIlm0V7N2fP8abA==
   dependencies:
-    "@aws-amplify/cache" "4.0.47"
-    "@aws-amplify/core" "4.5.9"
+    "@aws-amplify/cache" "4.0.48"
+    "@aws-amplify/core" "4.5.10"
     amazon-cognito-identity-js "5.2.10"
     crypto-js "^4.1.1"
 
-"@aws-amplify/cache@4.0.47":
-  version "4.0.47"
-  resolved "https://registry.yarnpkg.com/@aws-amplify/cache/-/cache-4.0.47.tgz#35fa68c77f488d73006633ecdc5016e5e117a0ec"
-  integrity sha512-XVHtZFIo9nkamCR8+mBY3K9N5fjM6aQwwycWxG6pUa3B9AWUhJbUrDE5LpW9BsDc8/wqQsHyM8P52BNK5AgQNg==
+"@aws-amplify/cache@4.0.48":
+  version "4.0.48"
+  resolved "https://registry.yarnpkg.com/@aws-amplify/cache/-/cache-4.0.48.tgz#8ec77458876da7a63d2e34afd081f6b811c1ae0a"
+  integrity sha512-WXW4K1rf3iBV6c6C+QutPj5ZuOH4osd3R7EIdK1/k8+KMlCsnp9DkhKpSH8OxOhVy6n/QgPsGhPEKHbix6E6Eg==
   dependencies:
-    "@aws-amplify/core" "4.5.9"
+    "@aws-amplify/core" "4.5.10"
 
-"@aws-amplify/core@4.5.9":
-  version "4.5.9"
-  resolved "https://registry.yarnpkg.com/@aws-amplify/core/-/core-4.5.9.tgz#0c43abee404fe7b818b113691ae6f9eaab3fd5c8"
-  integrity sha512-MCVbhpHvxwSNL9FkdUfpeBzXR/x3RC2NbYfENgxEKx/dCxWjehr84podf3LRT5wSJXlPLHjpPK6Ob3rhlKk23Q==
+"@aws-amplify/core@4.5.10":
+  version "4.5.10"
+  resolved "https://registry.yarnpkg.com/@aws-amplify/core/-/core-4.5.10.tgz#219c6da8fa9326d98abc77e00e8e72ac9d8a0711"
+  integrity sha512-iXlNRsGWzDoRLx+e0JntiAJwQKMy7QmvIuaVPLe2vPGltuMXqvEHg5Re8yUnwB923OrAGctylCD7UDomco2w7w==
   dependencies:
     "@aws-crypto/sha256-js" "1.0.0-alpha.0"
     "@aws-sdk/client-cloudwatch-logs" "3.6.1"
