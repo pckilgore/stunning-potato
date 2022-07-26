@@ -86,7 +86,6 @@ export const machine = createMachine(
           src: "refreshToken",
         },
         on: {
-          NEEDS_TO_LOGIN: "logged_out",
           TOKEN_REFRESHED: {
             actions: ["storeUser"],
           },
