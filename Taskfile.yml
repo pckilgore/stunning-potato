@@ -19,6 +19,10 @@ tasks:
     cmds:
       - yarn vite dev
 
+  typegen:all:
+    desc: Typegen all the things.
+    deps: ["typegen:xstate"]
+
   typegen:xstate:
     desc: Generate types for xstate machines.
     cmds:

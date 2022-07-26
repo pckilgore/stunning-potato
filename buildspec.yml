@@ -17,6 +17,7 @@ phases:
     commands:
       - task info
       - task env
+      - task typegen:all
       - task typecheck
       - task test
   build:
