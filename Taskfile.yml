@@ -61,7 +61,7 @@ tasks:
       - yarn vite build --mode production --outDir dist/prod
     vars:
       REACT_APP_RELEASE:
-        sh: git log -n 1 --format=%h
+        sh: git rev-parse --short=8 HEAD
 
   build:staging:dangerous:
     desc: Staging build without typecheck
@@ -69,7 +69,7 @@ tasks:
       - yarn vite build --mode staging --outDir dist/staging
     vars:
       REACT_APP_RELEASE:
-        sh: git log -n 1 --format=%h
+        sh: git rev-parse --short=8 HEAD
 
   test:
     desc: Run tests defaults to watch locally, run-once in CI
@@ -152,6 +152,7 @@ tasks:
     desc: Print out various key environment information.
     cmds:
       - echo "node $(node --version)"
+      - echo "git --version"
       - echo "npm $(npm --version)"
       - echo "yarn $(yarn --version)"
       - echo "aws $(aws --version)"
