@@ -41,3 +41,6 @@ _.tfstate._.backup
 
 # OSX
 .DS_STORE
+
+#Typegen Files
+*.typegen.ts

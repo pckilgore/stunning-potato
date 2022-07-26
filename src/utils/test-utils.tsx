@@ -1,9 +1,7 @@
 import React from "react";
 import { cleanup, render } from "@testing-library/react";
 import { afterEach } from "vitest";
-import Auth from "@aws-amplify/auth";
 
-import * as Cognito from "../providers/cognito";
 import { BrowserRouter } from "react-router-dom";
 
 afterEach(() => {
@@ -11,25 +9,7 @@ afterEach(() => {
 });
 
 const WrapWithProviders = ({ children }: { children: React.ReactNode }) => {
-  React.useEffect(() => {
-    Auth.currentAuthenticatedUser = vi.fn().mockImplementation(() => {
-      return Promise.resolve(true);
-    });
-
-    Auth.currentSession = vi.fn().mockImplementation(() => {
-      return Promise.resolve({
-        getAccessToken: () => ({
-          getJwtToken: () => "alfksdjlfkjladkfwioejkl",
-        }),
-      });
-    });
-  }, []);
-
-  return (
-    <Cognito.TestProvider>
-      <BrowserRouter>{children}</BrowserRouter>
-    </Cognito.TestProvider>
-  );
+  return <BrowserRouter>{children}</BrowserRouter>;
 };
 
 const customRender = (ui: React.ReactElement, options = {}) =>

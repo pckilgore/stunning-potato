@@ -1,5 +1,5 @@
 import { render, screen } from "../../utils/test-utils";
-import Register from "./Register";
+import { Register } from "./Register";
 
 describe("<Register />", () => {
   test("to render register text", () => {

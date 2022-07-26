@@ -1,10 +1,14 @@
-import { CognitoProvider } from "./providers/cognito";
+import { BrowserRouter } from "react-router-dom";
+
+import { AuthProvider } from "./providers/auth";
 import { Router } from "./router";
 
 export default function App() {
   return (
-    <CognitoProvider>
-      <Router />
-    </CognitoProvider>
+    <BrowserRouter>
+      <AuthProvider>
+        <Router />
+      </AuthProvider>
+    </BrowserRouter>
   );
 }

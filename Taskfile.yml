@@ -17,7 +17,17 @@ tasks:
   dev:
     desc: run a local dev server with typescript watch
     cmds:
-      - yarn vite
+      - yarn vite dev
+
+  typegen:xstate:
+    desc: Generate types for xstate machines.
+    cmds:
+      - yarn xstate typegen "src/machines/*.ts"
+
+  typegen:xstate:watch:
+    desc: Generate types for xstate machines (watch mode).
+    cmds:
+      - yarn xstate typegen "src/machines/*.ts" --watch
 
   storybook:
     desc: Launch storybook for development
@@ -45,11 +55,17 @@ tasks:
     desc: Production build without typecheck
     cmds:
       - yarn vite build --mode production --outDir dist/prod
+    vars:
+      REACT_APP_RELEASE:
+        sh: git log -n 1 --format=%h
 
   build:staging:dangerous:
     desc: Staging build without typecheck
     cmds:
       - yarn vite build --mode staging --outDir dist/staging
+    vars:
+      REACT_APP_RELEASE:
+        sh: git log -n 1 --format=%h
 
   test:
     desc: Run tests defaults to watch locally, run-once in CI

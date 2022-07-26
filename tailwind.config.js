@@ -7,6 +7,19 @@ module.exports = {
   darkMode: "class",
   content: ["./src/**/*.tsx", "./index.html"],
   theme: {
+    fontSize: {
+      // fontSize, Leading
+      "2xs": ["0.75rem", "1rem"], // 12, 16
+      xs: ["0.8125rem", "1.125rem"], // 13, 18
+      s: ["0.875rem", "1.125rem"], // 14, 18
+      base: ["1rem", "1.25rem"], // 16, 20
+      lg: ["1.125rem", "1.375rem"], // 18, 22
+      xl: ["1.125rem", "1.5"], // 18, 24
+      "2xl": ["1.5rem", "2rem"], // 24, 32 "heading 4"
+      "3xl": ["1.75rem", "2.375rem"], // 28, 38 "heading 3"
+      "4xl": ["2rem", "2.75rem"], // 32, 44 "heading 2"
+      "5xl": ["2.5rem", "3.25rem"], // 40, 52 "heading 1"
+    },
     colors: {
       transparent: "transparent",
       current: "currentColor",
@@ -49,12 +62,12 @@ module.exports = {
         // Means classnames should 1:1 map, e.g.: "bg-gray-700 dark:dark-bg-gray-700"
         // vs : "bg-gray-700 dark:dark-bg-gray-???"
         gray: {
-          700: "#F3F3F4",
-          600: "#A2A1A3",
-          400: "#747276",
-          300: "#353338",
-          150: "#2A272C",
           50: "#232025",
+          150: "#2A272C",
+          300: "#353338",
+          400: "#747276",
+          600: "#A2A1A3",
+          700: "#E8E7E8",
         },
         background: {
           100: "#17141A",
@@ -71,10 +84,6 @@ module.exports = {
       },
     },
     extend: {
-      fontSize: {
-        "2.5xl": "1.75rem",
-        button: ["0.8125rem", "1.25rem"],
-      },
       lineHeight: {
         38: "2.375rem",
       },
@@ -87,12 +96,12 @@ module.exports = {
       },
       gradientColorStops: {
         brand: {
-          start: "#9642FD",
-          end: "#7E2EE0",
+          start: "#7E2EE0",
+          end: "#9642FD",
         },
         brand2: {
-          start: "#B980FF",
-          end: "#7028CA",
+          end: "#B980FF",
+          start: "#7028CA",
         },
       },
     },

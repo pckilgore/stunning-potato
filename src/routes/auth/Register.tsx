@@ -1,109 +1,132 @@
-import React from "react";
-import { useFormik } from "formik";
+import { Formik, Form, Field } from "formik";
+import * as Sentry from "@sentry/react";
 import * as Yup from "yup";
-import { Link, useNavigate } from "react-router-dom";
 
-import * as Cognito from "../../providers/cognito";
+import * as Auth from "../../providers/auth";
+import { meetsPasswordBreachRequirements } from "../../utils/authentication";
 
-export default function Register() {
-  const navigate = useNavigate();
-  const { signUp, signInApple, signInGoogle } = Cognito.useCognito();
+import { Google, Apple } from "../../components/SocialIcons";
 
-  const [submitting, setSubmitting] = React.useState<boolean>(false);
+import { Button } from "../../design/Button";
+import { OAuthButton } from "../../design/Button";
+import { PasswordInput } from "../../design/PasswordInput";
+import { Text } from "../../design/Text";
+import { TextInput } from "../../design/TextInput";
+import { FormError } from "./FormError";
 
-  const formik = useFormik({
-    initialValues: {
-      email: "",
-      password: "",
-    },
-    validationSchema: RegisterSchema,
-    validateOnChange: false,
-    validateOnMount: false,
-    validateOnBlur: true,
-    onSubmit: async ({ email, password }) => {
-      try {
-        setSubmitting(true);
+const RegisterSchema = Yup.object({
+  username: Yup.string()
+    .email("You must use a valid email.")
+    .required("Email is required"),
+  password: Yup.string()
+    .min(8, "Passwords must be longer than 8 characters.")
+    .required("Must provide a password."),
+  confirm: Yup.string()
+    .oneOf([Yup.ref("password")], "Passwords must match.")
+    .required("Must confirm password by typing it again."),
+});
 
-        const user = await signUp(email, password);
-
-        if (user) {
-          navigate(`/verify?username=${user.user.username}`);
-        }
-      } catch (error: any) {
-        // setError(error.message);
-      } finally {
-        setSubmitting(false);
-      }
-    },
-  });
+export function Register() {
+  const actions = Auth.useActions();
 
   return (
-    <div
-      className="flex w-full justify-center mt-10 pb-20"
-      data-testid="register-container"
-    >
-      <div className="flex flex-col md:w-1/2 w-full">
-        <div className="flex flex-col mb-2 items-center">
-          <h2>Register</h2>
-        </div>
-        <div className="mt-6">
-          <button
-            className="w-full"
-            disabled={submitting}
-            type="submit"
-            onClick={signInGoogle}
-          >
-            Register with Google
-          </button>
-          <button
-            className="w-full"
-            disabled={submitting}
-            type="submit"
-            onClick={signInApple}
-          >
-            Register with Apple
-          </button>
-        </div>
-        <div className="flex w-full items-center justify-between my-4">
-          <div className="border-b border-mono-gray border-opacity-20 w-2/5" />
-          <p className="forms text-mono-black text-opacity-20">OR</p>
-          <div className="border-b border-mono-gray border-opacity-20 w-2/5" />
-        </div>
-        <form onSubmit={formik.handleSubmit}>
-          <input
-            type="email"
-            name="email"
-            placeholder="hello@clouty.io"
-            onChange={formik.handleChange}
-            value={formik.values.email}
-            className="w-full"
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            onChange={formik.handleChange}
-            value={formik.values.password}
-            className="w-full mt-4"
-          />
-          <div className="flex lg:flex-row flex-col justify-between lg:mt-6 mt-4 lg:items-center">
-            <button>register</button>
-            <div className="flex lg:mt-0 md:mt-3 md:justify-start mt-6 justify-center">
-              <p className="text-sm">
-                Already have an account?{" "}
-                <Link className="cursor-pointer" to="/login">
-                  Login
-                </Link>
-              </p>
-            </div>
-          </div>
-        </form>
+    <>
+      <div className="flex flex-col gap-y-2 md:flex-row md:gap-x-2 p-8 w-full">
+        <OAuthButton Logo={<Google />} onClick={actions.signInGoogle}>
+          Sign Up with Google
+        </OAuthButton>
+        <OAuthButton Logo={<Apple />} onClick={actions.signInApple}>
+          Sign Up with Apple
+        </OAuthButton>
       </div>
-    </div>
+      <div className="flex flex-nowrap items-center">
+        <div className="border-b border-dark-gray-50 w-1/2" />
+        <Text as="span" variant="label" color="text-gray-600" className="px-2">
+          or
+        </Text>
+        <div className="border-b border-dark-gray-50 w-1/2" />
+      </div>
+      <Formik
+        validationSchema={RegisterSchema}
+        validateOnChange={false}
+        onSubmit={async (params, { setFieldError }) => {
+          try {
+            const passOk = await meetsPasswordBreachRequirements(
+              params.password
+            );
+            if (passOk) {
+              await actions.signUp(params);
+            } else {
+              setFieldError(
+                "password",
+                "This password is known to be weak. You must choose a different password."
+              );
+            }
+          } catch (err) {
+            if (err instanceof Error) {
+              setFieldError("username", err.message);
+              return;
+            } else {
+              Sentry.captureException(err);
+              setFieldError("username", "Unknown error. Try again.");
+            }
+          }
+        }}
+        initialValues={{
+          username: "",
+          password: "",
+          confirm: "",
+        }}
+      >
+        {({ errors, touched, isSubmitting }) => (
+          <Form className="flex flex-col h-full px-8 pb-6 gap-y-4">
+            <Field
+              required
+              id="registration-email-input"
+              as={TextInput}
+              type="email"
+              name="username"
+              label="Email"
+              error={touched.username && Boolean(errors.username)}
+              aria-errormessage="username-error"
+            />
+            <FormError id="username-error" name="username" />
+            <Field
+              required
+              id="registration-password-input"
+              as={PasswordInput}
+              name="password"
+              label="Password"
+              error={touched.password && Boolean(errors.password)}
+              aria-errormessage="password-error"
+            />
+            <FormError id="password-error" name="password" />
+            <Field
+              required
+              id="registration-confirm-input"
+              as={PasswordInput}
+              name="confirm"
+              label="Confirm Password"
+              error={touched.confirm && Boolean(errors.confirm)}
+              aria-errormessage="confirm-error"
+            />
+            <FormError id="confirm-error" name="confirm" />
+            <div className="flex justify-between">
+              <Button type="submit" disabled={isSubmitting}>
+                Next
+              </Button>
+              <div className="flex items-center gap-x-2">
+                <Text variant="body-small" color="text-dark-gray-600">
+                  Already a member?
+                </Text>
+                <Button variant="tiny" onClick={actions.requestLogin}>
+                  Sign In
+                </Button>
+              </div>
+            </div>
+          </Form>
+        )}
+      </Formik>
+    </>
   );
 }
-
-const RegisterSchema = Yup.object().shape({
-  email: Yup.string().email().required("Required"),
-  password: Yup.string().min(6).required("Required"),
-});

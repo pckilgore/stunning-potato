@@ -1,74 +1,125 @@
-import React from "react";
-import { useFormik } from "formik";
+import * as Sentry from "@sentry/react";
+import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
-import { Link, useNavigate } from "react-router-dom";
+
 import { Google, Apple } from "../../components/SocialIcons";
 import { OAuthButton } from "../../design/Button";
 import { TextInput } from "../../design/TextInput";
+import { PasswordInput } from "../../design/PasswordInput";
+import { Button } from "../../design/Button";
+import { Text } from "../../design/Text";
+import { FormError } from "./FormError";
+import { LoadSpin } from "../../components/LoadSpin";
 
-import * as Cognito from "../../providers/cognito";
-
-export default function Login() {
-  const navigate = useNavigate();
-  const { signIn, signInApple, signInGoogle } = Cognito.useCognito();
-
-  const [submitting, setSubmitting] = React.useState<boolean>(false);
-
-  const formik = useFormik({
-    initialValues: {
-      email: "",
-      password: "",
-    },
-    validationSchema: LoginSchema,
-    validateOnChange: false,
-    validateOnMount: false,
-    validateOnBlur: true,
-    onSubmit: async ({ email, password }) => {
-      try {
-        setSubmitting(true);
-
-        const user = await signIn(email, password);
-
-        if (user) {
-          navigate(`/dashboard`);
-        }
-      } catch (error: any) {
-        // setError(error.message);
-      } finally {
-        setSubmitting(false);
-      }
-    },
-  });
-
-  return (
-    <div>
-      <div className="flex flex-col gap-y-2 md:flex-row md:gap-x-2 p-8 w-full">
-        <OAuthButton Logo={<Google />}>Sign Up with Google</OAuthButton>
-        <OAuthButton Logo={<Apple />}>Sign Up with Apple</OAuthButton>
-      </div>
-      <form onSubmit={formik.handleSubmit}>
-        <TextInput
-          id="emailinput"
-          label="email"
-          name="email"
-          placeholder="hello@clouty.io"
-          onChange={formik.handleChange}
-          value={formik.values.email}
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          onChange={formik.handleChange}
-          value={formik.values.password}
-          className="w-full mt-4"
-        />
-      </form>
-    </div>
-  );
-}
+import * as Auth from "../../providers/auth";
 
 const LoginSchema = Yup.object().shape({
-  email: Yup.string().email().required("Required"),
+  username: Yup.string().email().required("Required"),
   password: Yup.string().min(6).required("Required"),
 });
+
+export function Login() {
+  const actions = Auth.useActions();
+
+  return (
+    <>
+      <div className="flex flex-col gap-y-2 md:flex-row md:gap-x-2 p-8 w-full">
+        <OAuthButton Logo={<Google />} onClick={actions.signInGoogle}>
+          Sign In with Google
+        </OAuthButton>
+        <OAuthButton Logo={<Apple />} onClick={actions.signInApple}>
+          Sign In with Apple
+        </OAuthButton>
+      </div>
+      <div className="flex flex-nowrap items-center">
+        <div className="border-b border-dark-gray-50 w-1/2" />
+        <Text as="span" variant="label" color="text-gray-600" className="px-2">
+          or
+        </Text>
+        <div className="border-b border-dark-gray-50 w-1/2" />
+      </div>
+      <Formik
+        validationSchema={LoginSchema}
+        onSubmit={async (params, { setFieldError }) => {
+          try {
+            await actions.signIn(params);
+          } catch (err) {
+            const msg =
+              (err as Error)?.message ?? "Unknown error, please try again.";
+            setFieldError("username", msg);
+            Sentry.captureException(err);
+          }
+        }}
+        initialValues={{
+          username: "",
+          password: "",
+        }}
+      >
+        {({ errors, touched, isSubmitting }) => (
+          <Form className="flex flex-col px-8 pb-6 gap-y-4">
+            <Field
+              as={TextInput}
+              id="login-email"
+              label="Email"
+              name="username"
+              aria-errormessage="login-err"
+              error={touched.username && Boolean(errors.username)}
+            />
+            <FormError name="username" id="login-err" />
+            <Field
+              as={PasswordInput}
+              id="login-password"
+              name="password"
+              label="Password"
+              error={touched.password && Boolean(errors.password)}
+            />
+            <div className="flex py-3 justify-between">
+              <Text
+                link
+                as="button"
+                variant="body-small"
+                color="text-dark-gray-600"
+                onClick={actions.requestForgotPassword}
+              >
+                Forgot your password?
+              </Text>
+              <Text
+                link
+                as="button"
+                type="button"
+                variant="body-small"
+                color="text-dark-gray-600"
+                onClick={actions.requestVerification}
+              >
+                Have a verification code?
+              </Text>
+            </div>
+            <div className="flex justify-between items-center pt-2">
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? (
+                  <div className="h-6 w-6">
+                    <LoadSpin variant="white" />
+                  </div>
+                ) : (
+                  "Sign In"
+                )}
+              </Button>
+              <div className="flex gap-x-2 items-center">
+                <Text
+                  as="label"
+                  variant="body-small"
+                  color="text-dark-gray-600"
+                >
+                  New to Clouty?
+                </Text>
+                <Button variant="tiny" onClick={actions.requestRegistration}>
+                  Sign Up
+                </Button>
+              </div>
+            </div>
+          </Form>
+        )}
+      </Formik>
+    </>
+  );
+}
