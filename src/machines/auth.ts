@@ -6,8 +6,7 @@ import { MS_SEC, SEC_MIN } from "../utils/time";
 
 export type Events =
   | { type: "AUTHENTICATED"; user: UserModel }
-  | { type: "UNAUTHORIZED"; destination: string }
-  | { type: "NEEDS_TO_LOGIN" }
+  | { type: "NEEDS_TO_LOGIN"; destination?: string }
   | { type: "REGISTER" }
   | { type: "NEEDS_VERIFICATION"; verificationUsername?: string }
   | { type: "NEEDS_PROFILE" }
@@ -44,7 +43,7 @@ export const machine = createMachine(
           src: "getInitialState",
         },
         on: {
-          UNAUTHORIZED: {
+          NEEDS_TO_LOGIN: {
             target: "logged_out",
             actions: ["setDeepLinkIntention"],
           },
@@ -54,7 +53,6 @@ export const machine = createMachine(
             target: "registration_verification",
             actions: "storeVerificationUsername",
           },
-          NEEDS_TO_LOGIN: "logged_out",
           AUTHENTICATED: {
             target: "check_profile",
             actions: "storeUser",
@@ -73,7 +71,7 @@ export const machine = createMachine(
             target: "check_profile",
             actions: "storeUser",
           },
-          UNAUTHORIZED: {
+          NEEDS_TO_LOGIN: {
             target: "logged_out",
             actions: ["setDeepLinkIntention"],
           },
@@ -89,7 +87,7 @@ export const machine = createMachine(
           TOKEN_REFRESHED: {
             actions: ["storeUser"],
           },
-          UNAUTHORIZED: {
+          NEEDS_TO_LOGIN: {
             target: "logged_out",
             actions: ["setDeepLinkIntention"],
           },
@@ -138,12 +136,14 @@ export const machine = createMachine(
             target: "reset_password",
             actions: "storeVerificationUsername",
           },
+          NEEDS_TO_LOGIN: "logged_out",
         },
       },
       reset_password: {
         exit: ["clearVerificationUsername"],
         on: {
           NEEDS_TO_LOGIN: "logged_out",
+          REGISTER: "registration",
           NEEDS_VERIFICATION: {
             target: "reset_password",
             actions: "storeVerificationUsername",
@@ -161,6 +161,7 @@ export const machine = createMachine(
         exit: ["clearVerificationUsername"],
         on: {
           REGISTER: "registration",
+          NEEDS_TO_LOGIN: "logged_out",
           VERIFIED: "registration_success",
         },
       },
@@ -201,7 +202,7 @@ export const machine = createMachine(
       }),
       setDeepLinkIntention: assign({
         deepLinkIntention: (_, event) => {
-          if (event.type === "UNAUTHORIZED") {
+          if (event.type === "NEEDS_TO_LOGIN") {
             return event.destination;
           }
           return;

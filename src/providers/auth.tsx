@@ -55,7 +55,7 @@ const createActions = (send: SendFunction) => ({
   },
 
   unauthorized: (destination: string) =>
-    send({ type: "UNAUTHORIZED", destination }),
+    send({ type: "NEEDS_TO_LOGIN", destination }),
 
   signIn: async ({ username, password }: Credentials) => {
     const cognitoUser: CognitoUser = await Auth.signIn(username, password);
@@ -146,7 +146,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (pathname === "/auth/register") {
           send("REGISTER");
         } else {
-          send({ type: "UNAUTHORIZED", destination: pathname });
+          send({ type: "NEEDS_TO_LOGIN", destination: pathname });
         }
       },
     },

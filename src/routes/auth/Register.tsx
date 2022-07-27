@@ -1,3 +1,4 @@
+import React from "react";
 import { Formik, Form, Field } from "formik";
 import * as Sentry from "@sentry/react";
 import * as Yup from "yup";
@@ -28,6 +29,10 @@ const RegisterSchema = Yup.object({
 
 export function Register() {
   const actions = Auth.useActions();
+
+  React.useEffect(() => {
+    actions.requestRegistration();
+  }, []);
 
   return (
     <>
@@ -87,6 +92,7 @@ export function Register() {
               type="email"
               name="username"
               label="Email"
+              autoComplete="email"
               error={touched.username && Boolean(errors.username)}
               aria-errormessage="username-error"
             />
@@ -97,6 +103,7 @@ export function Register() {
               as={PasswordInput}
               name="password"
               label="Password"
+              autoComplete="new-password"
               error={touched.password && Boolean(errors.password)}
               aria-errormessage="password-error"
             />
@@ -107,10 +114,23 @@ export function Register() {
               as={PasswordInput}
               name="confirm"
               label="Confirm Password"
+              autoComplete="new-password"
               error={touched.confirm && Boolean(errors.confirm)}
               aria-errormessage="confirm-error"
             />
             <FormError id="confirm-error" name="confirm" />
+            <div className="flex">
+              <Text
+                link
+                as="button"
+                type="button"
+                variant="body-small"
+                color="text-dark-gray-600"
+                onClick={actions.requestVerification}
+              >
+                Have a registration verification code?
+              </Text>
+            </div>
             <div className="flex justify-between">
               <Button type="submit" disabled={isSubmitting}>
                 Next

@@ -1,4 +1,5 @@
 import { Formik, Form, Field } from "formik";
+import { useNavigate } from "react-router";
 import * as Yup from "yup";
 
 import { Button } from "../../design/Button";
@@ -15,7 +16,8 @@ const ForgotPasswordSchema = Yup.object().shape({
 });
 
 export function ForgotPassword() {
-  const { forgotPassword } = Auth.useActions();
+  const actions = Auth.useActions();
+  const navigate = useNavigate();
 
   return (
     <div className="max-w-lg p-8 bg-dark-background-100">
@@ -37,7 +39,7 @@ export function ForgotPassword() {
         }}
         onSubmit={async (params, { setFieldError }) => {
           try {
-            await forgotPassword(params);
+            await actions.forgotPassword(params);
           } catch (err) {
             if (!(err instanceof Error)) {
               return;
@@ -61,11 +63,16 @@ export function ForgotPassword() {
               as={TextInput}
               id="forgot-input"
               label="Email"
+              autoComplete="email"
               aria-errormessage="forgot-err"
               name="username"
             />
             <FormError id="forgot-err" name="username" />
-            <div className="pt-6">
+            <div className="flex pt-6 gap-x-4">
+              <Button
+                variant="icon"
+                onClick={() => navigate(-1)}
+              >{`<--`}</Button>
               <Button type="submit">Send Code</Button>
             </div>
           </Form>

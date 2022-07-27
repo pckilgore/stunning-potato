@@ -81,6 +81,7 @@ export function ResetPassword() {
                 aria-errormessage="code-error"
                 label="Verification Code"
                 name="code"
+                autoComplete="one-time-code"
                 error={touched.code && Boolean(errors.code)}
               />
               <FormError id="code-error" name="code" />
@@ -104,6 +105,7 @@ export function ResetPassword() {
               aria-errormessage="password-error"
               name="password"
               label="New Password"
+              autoComplete="new-password"
               error={touched.password && Boolean(errors.password)}
             />
             <FormError id="password-error" name="password" />
@@ -113,6 +115,7 @@ export function ResetPassword() {
               aria-errormessage="confirm-error"
               name="confirm"
               label="Confirm Password"
+              autoComplete="new-password"
               error={touched.confirm && Boolean(errors.confirm)}
             />
             <FormError id="confirm-error" name="confirm" />

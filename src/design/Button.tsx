@@ -1,6 +1,7 @@
 import React from "react";
 import cn from "clsx";
 import type { PropsOf } from "../utils/react";
+import { LoadSpin } from "./LoadSpin";
 
 const DEFAULT_TAG = "button";
 
@@ -19,7 +20,15 @@ const variants = {
   `,
 };
 
-type PropsWeControl = "as" | "variant" | "bold" | "medium" | "color" | "caps";
+type PropsWeControl =
+  | "as"
+  | "variant"
+  | "bold"
+  | "medium"
+  | "color"
+  | "type"
+  | "caps"
+  | "working";
 type Props<T> = {
   as?: T;
   variant?: keyof typeof variants;
@@ -27,10 +36,14 @@ type Props<T> = {
   caps?: boolean;
   medium?: boolean;
   color?: string;
+  // Control spinner externally, ignoring internal spinner logic.
+  working?: boolean;
+  LoadingSpinner?: React.ReactNode;
+  type?: "button" | "submit" | "reset";
 };
 
 /**
- * Placeholder...
+ * A button.
  */
 export function Button<Tag extends React.ElementType = typeof DEFAULT_TAG>(
   props: Omit<PropsOf<Tag>, PropsWeControl> & Props<Tag>
@@ -42,8 +55,22 @@ export function Button<Tag extends React.ElementType = typeof DEFAULT_TAG>(
     className,
     variant = "base",
     type = "button",
+    working,
+    LoadingSpinner = (
+      <div className="flex w-full h-full items-center justify-center">
+        <div className="h-6 w-6">
+          <LoadSpin variant="white" />
+        </div>
+      </div>
+    ),
+    onClick,
+    children,
     ...elProps
   } = props;
+
+  const [spin, setSpin] = React.useState(false);
+
+  const shouldSpin = working === undefined ? spin : working;
 
   const innerType = El === DEFAULT_TAG ? type : undefined;
 
@@ -52,7 +79,25 @@ export function Button<Tag extends React.ElementType = typeof DEFAULT_TAG>(
     capitalize: caps,
   });
 
-  return <El type={innerType} className={style} {...elProps} />;
+  return (
+    <El
+      type={innerType}
+      className={style}
+      onClick={async (el) => {
+        if (onClick) {
+          try {
+            setSpin(true);
+            await onClick(el);
+          } finally {
+            setSpin(false);
+          }
+        }
+      }}
+      {...elProps}
+    >
+      {shouldSpin ? LoadingSpinner : children}
+    </El>
+  );
 }
 
 type OAuthProps = {

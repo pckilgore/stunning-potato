@@ -8,6 +8,16 @@
   #root {
     @apply h-full;
   }
+
+  /* These classes allow removing the arrow buttons on number inputs. */
+  -webkit-inner-spin-button,
+  -webkit-outer-spin-button {
+    -webkit-appearance: none !important;
+    margin: 0 !important;
+  }
+  input[type="number"] {
+    -moz-appearance: textfield !important;
+  }
 }
 
 @font-face {

@@ -1,3 +1,4 @@
+import React from "react";
 import * as Sentry from "@sentry/react";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
@@ -9,7 +10,6 @@ import { PasswordInput } from "../../design/PasswordInput";
 import { Button } from "../../design/Button";
 import { Text } from "../../design/Text";
 import { FormError } from "./FormError";
-import { LoadSpin } from "../../components/LoadSpin";
 
 import * as Auth from "../../providers/auth";
 
@@ -20,6 +20,10 @@ const LoginSchema = Yup.object().shape({
 
 export function Login() {
   const actions = Auth.useActions();
+
+  React.useEffect(() => {
+    actions.requestLogin();
+  }, []);
 
   return (
     <>
@@ -62,6 +66,7 @@ export function Login() {
               id="login-email"
               label="Email"
               name="username"
+              autoComplete="username"
               aria-errormessage="login-err"
               error={touched.username && Boolean(errors.username)}
             />
@@ -71,38 +76,28 @@ export function Login() {
               id="login-password"
               name="password"
               label="Password"
+              autoComplete="current-password"
               error={touched.password && Boolean(errors.password)}
             />
-            <div className="flex py-3 justify-between">
-              <Text
-                link
-                as="button"
-                variant="body-small"
-                color="text-dark-gray-600"
-                onClick={actions.requestForgotPassword}
-              >
-                Forgot your password?
-              </Text>
+            <div className="flex">
               <Text
                 link
                 as="button"
                 type="button"
                 variant="body-small"
                 color="text-dark-gray-600"
-                onClick={actions.requestVerification}
+                onClick={actions.requestForgotPassword}
               >
-                Have a verification code?
+                Forgot your password?
               </Text>
             </div>
             <div className="flex justify-between items-center pt-2">
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? (
-                  <div className="h-6 w-6">
-                    <LoadSpin variant="white" />
-                  </div>
-                ) : (
-                  "Sign In"
-                )}
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                working={isSubmitting}
+              >
+                Sign In
               </Button>
               <div className="flex gap-x-2 items-center">
                 <Text

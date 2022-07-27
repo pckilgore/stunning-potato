@@ -1,4 +1,3 @@
-import * as Yup from "yup";
 import { sub } from "date-fns";
 /**
  * This is a minimal model representing the current user from AWS Cognito.
@@ -34,11 +33,3 @@ export type ProfileModel = {
 
 export const getMinBirthdate = () =>
   sub(new Date(Date.now()), { years: 18, days: 1 });
-
-export const ProfileSchema = Yup.object({
-  firstName: Yup.string().required("Must profile first name."),
-  lastName: Yup.string().required("Must provide last name."),
-  birthDate: Yup.date()
-    .max(getMinBirthdate(), "You must be 18+ to use Clouty")
-    .required("Must provide date of birth."),
-});

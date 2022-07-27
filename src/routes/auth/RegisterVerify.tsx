@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 
@@ -25,6 +26,8 @@ const VerifySchema = Yup.object().shape({
 export function RegisterVerify() {
   const { actions, state } = Auth.useAuth();
   const [resendMsg, setResendMsg] = React.useState("");
+  const navigate = useNavigate();
+
   const username = state.context.verificationUsername ?? "";
 
   return (
@@ -132,10 +135,7 @@ export function RegisterVerify() {
             ) : null}
           </div>
           <div className="flex bg-dark-background-100 gap-x-2 px-8 py-6">
-            <Button
-              variant="icon"
-              onClick={actions.requestRegistration}
-            >{`<--`}</Button>
+            <Button variant="icon" onClick={() => navigate(-1)}>{`<--`}</Button>
             <Button type="submit">Verify email</Button>
           </div>
         </Form>

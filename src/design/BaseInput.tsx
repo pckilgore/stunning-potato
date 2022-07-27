@@ -9,6 +9,7 @@ export type BaseProps = {
   inputClass?: string;
   error?: boolean;
   permaValue?: boolean; // Some HTML5 inputs always show something so keep label small
+  widget?: boolean; // hides the little stupid triangle don't you hate designers?
 } & Omit<React.HTMLProps<HTMLInputElement>, "className" | "aria-required">;
 
 const base =
@@ -47,7 +48,8 @@ export const InternalOnlyBaseInputWithStyles = React.forwardRef<
     error,
     inputClass,
     permaValue,
-    placeholder: _,
+    widget = true,
+    placeholder: _, // eslint-disable-line -- we use the label for this purpose
     ...rest
   } = props;
 
@@ -58,7 +60,7 @@ export const InternalOnlyBaseInputWithStyles = React.forwardRef<
 
   const labelStyle = cn(
     "absolute flex text-dark-gray-600 transition-all",
-    focused || value || permaValue
+    focused || value !== "" || permaValue
       ? "items-start top-1 text-xs"
       : "items-center top-1/3 text-base font-medium"
   );
@@ -80,13 +82,15 @@ export const InternalOnlyBaseInputWithStyles = React.forwardRef<
           [disabledStyle]: disabled,
         })}
       />
-      <Widget
-        color={cn({
-          "border-b-accent-red": error,
-          "border-b-dark-brand-500": focused,
-          "border-b-dark-gray-150": !error && !focused,
-        })}
-      />
+      {widget ? (
+        <Widget
+          color={cn({
+            "border-b-accent-red": error,
+            "border-b-dark-brand-500": focused,
+            "border-b-dark-gray-150": !error && !focused,
+          })}
+        />
+      ) : null}
     </div>
   );
 });

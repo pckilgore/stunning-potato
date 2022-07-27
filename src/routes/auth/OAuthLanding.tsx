@@ -1,5 +1,5 @@
 import React from "react";
-import { LoadSpin } from "../../components/LoadSpin";
+import { LoadSpin } from "../../design/LoadSpin";
 import * as Auth from "../../providers/auth";
 
 export function OAuthLanding() {
