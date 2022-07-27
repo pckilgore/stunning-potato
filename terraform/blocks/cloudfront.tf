@@ -71,7 +71,7 @@ resource "aws_cloudfront_response_headers_policy" "header_policy" {
 
   security_headers_config {
     content_security_policy {
-      content_security_policy = "default-src 'self';script-src 'self' ${var.environment != "production" ? "'unsafe-inline'" : ""} *.google-analytics.com *.googleapis.com;img-src 'self' data:;font-src 'self' data:;connect-src 'self' *.clouty.io *.sentry.io *.amazonaws.com;report-uri ${var.report_url}&sentry_environment=${var.environment}"
+      content_security_policy = "default-src 'self';script-src 'self' ${var.environment != "production" ? "'unsafe-inline'" : ""} *.google-analytics.com *.googleapis.com;img-src 'self' data:;font-src 'self' data:;connect-src 'self' *.clouty.io *.sentry.io *.amazonaws.com https://api.pwnedpasswords.com;report-uri ${var.report_url}&sentry_environment=${var.environment}"
       override                = true
     }
 
