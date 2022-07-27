@@ -46,7 +46,7 @@ resource "aws_cloudfront_distribution" "root_cdn" {
   }
 
   custom_error_response {
-    error_caching_min_ttl = 0
+    error_caching_min_ttl = var.environment == "production" ? 300 : 5
     error_code            = 404
     response_code         = 200
     response_page_path    = "/index.html"
@@ -70,7 +70,7 @@ resource "aws_cloudfront_response_headers_policy" "header_policy" {
 
   security_headers_config {
     content_security_policy {
-      content_security_policy = "default-src 'self' data: https: *.clouty.io *.google-analytics.com 'unsafe-inline'; report-uri ${var.report_url}&sentry_environment=${var.environment}"
+      content_security_policy = "default-src 'self';script-src 'self' ${var.environment != "production" ? "'unsafe-inline'" : ""} *.google-analytics.com *.googleapis.com;img-src 'self' data:;font-src 'self' data:;connect-src 'self' *.clouty.io *.sentry.io *.amazonaws.com;report-uri ${var.report_url}&sentry_environment=${var.environment}"
       override                = true
     }
 
