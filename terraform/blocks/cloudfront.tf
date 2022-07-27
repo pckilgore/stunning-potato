@@ -36,7 +36,8 @@ resource "aws_cloudfront_distribution" "root_cdn" {
     // https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-origin-request-policies.html
     origin_request_policy_id = "88a5eaf4-2fd4-4709-b370-b4c650ea3fcf"
 
-    viewer_protocol_policy     = "redirect-to-https"
+    viewer_protocol_policy = "redirect-to-https"
+
     response_headers_policy_id = aws_cloudfront_response_headers_policy.header_policy.id
 
     function_association {
