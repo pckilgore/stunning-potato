@@ -27,5 +27,6 @@ module "web" {
 
   domain    = "clouty.io"
   subdomain = "app"
+  report_url = "https://o1211077.ingest.sentry.io/api/6600273/security/?sentry_key=19b6827eeb1d4f7d965da998276aceea"
 }
 

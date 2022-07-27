@@ -27,33 +27,20 @@ resource "aws_cloudfront_distribution" "root_cdn" {
     target_origin_id = local.s3_origin_id
     compress         = true
 
+    // Managed Policy: CachingOptimized
+    // https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-cache-policies.html
+    // Recommended for S3
+    cache_policy_id = "658327ea-f89d-4fab-a63d-7e88639e58f6"
+
+    // Managed Policy: CORS-S3Origin
+    // https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-origin-request-policies.html
+    origin_request_policy_id = "88a5eaf4-2fd4-4709-b370-b4c650ea3fcf"
+
     viewer_protocol_policy     = "redirect-to-https"
     response_headers_policy_id = aws_cloudfront_response_headers_policy.header_policy.id
 
-    // Overrides no-cache, no-store, private.  We better have a very good reason
-    // to want to do that, so zero is a good value (and the default value,
-    // actually if we don't set it, but let's be explicit).
-    min_ttl = 0
-
-    // Only check for new origin files once every day (if no specificied by
-    // origin). Since we don't currently specify any cache headers at the origin,
-    // this is going to apply to every file.
-    default_ttl = 86400
-
-    // This technically caps the TTL implied by the origin, so we set it to one 
-    // year so as to let the origin request a TTL up to that long.
-    max_ttl = 31536000
-
-    forwarded_values {
-      query_string = true
-
-      cookies {
-        forward = "none"
-      }
-    }
-
     function_association {
-      event_type = "viewer-response"
+      event_type   = "viewer-response"
       function_arn = aws_cloudfront_function.response_fn.arn
     }
   }
@@ -82,6 +69,15 @@ resource "aws_cloudfront_response_headers_policy" "header_policy" {
   name = replace("default_headers_${var.subdomain}_${var.domain}", "/[\\*\\.]/", "_")
 
   security_headers_config {
+    content_security_policy {
+      content_security_policy = "default-src 'self' data: https: *.clouty.io *.google-analytics.com 'unsafe-inline'; report-uri ${var.report_url}&sentry_environment=${var.environment}"
+      override                = true
+    }
+
+    content_type_options {
+      override = true
+    }
+
     // Only allow internal IFRAMEing of site
     frame_options {
       frame_option = "SAMEORIGIN"
@@ -100,7 +96,7 @@ resource "aws_cloudfront_response_headers_policy" "header_policy" {
 }
 
 resource "aws_cloudfront_function" "response_fn" {
-  name = replace("${var.subdomain}_${var.domain}-response", "/[\\*\\.]/", "_")
+  name    = replace("${var.subdomain}_${var.domain}-response", "/[\\*\\.]/", "_")
   runtime = "cloudfront-js-1.0"
   comment = "Strips CodeBuild headers"
   publish = true

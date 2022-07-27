@@ -38,6 +38,7 @@ _.tfstate
 _.tfstate.backup
 _.tfstate._.backup
 .terraform/
+**/*.tfplan
 
 # OSX
 .DS_STORE
