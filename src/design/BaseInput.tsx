@@ -27,7 +27,7 @@ const Widget = ({ color }: { color: string }) => {
       aria-hidden
       className={cn(
         color,
-        "absolute origin-bottom-right bottom-px right-0 border-b-8 border-l-8 border-l-dark-background-100 border-b-dark-gray-50 [transform:matrix(2,0,0,1,0,0)]"
+        "absolute origin-bottom-right bottom-px right-0 border-b-8 border-l-8 border-l-transparent border-b-dark-gray-50 [transform:matrix(2,0,0,1,0,0)]"
       )}
     />
   );
