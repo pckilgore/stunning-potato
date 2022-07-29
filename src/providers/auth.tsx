@@ -64,7 +64,14 @@ const createActions = (send: SendFunction) => ({
   },
 
   signUp: async ({ username, password }: Credentials) => {
-    const res = await Auth.signUp({ username, password });
+    const res = await Auth.signUp({
+      username,
+      password,
+      validationData: {
+        // Otherwise not available to perform server-side checks.
+        password,
+      },
+    });
 
     if (!res.userConfirmed) {
       send({ type: "NEEDS_VERIFICATION", verificationUsername: username });
