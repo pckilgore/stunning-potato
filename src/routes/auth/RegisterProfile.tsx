@@ -43,7 +43,7 @@ export function RegisterProfile() {
         const { day, month, year } = params.dob;
         const birthdate = new Date(`${year}-${month}-${day}`);
         if (birthdate > getMinBirthdate()) {
-          setFieldError("dob.year", "You must be 18+ to use Clouty");
+          setFieldError("dob.year", "You must be 18+ to use app");
           return;
         }
 

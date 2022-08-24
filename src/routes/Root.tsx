@@ -14,7 +14,7 @@ export default function Root() {
     >
       <div className="flex flex-col flex-grow justify-center gap-y-8">
         <Text as="h1" variant="h3">
-          <TwoToneHeading primary="Clouty" secondary="is coming soon" />
+          <TwoToneHeading primary="app" secondary="is coming soon" />
         </Text>
         <Text>If you see this, you're an authenticated user. Nice!</Text>
         <Button onClick={actions.signOut}>Logout</Button>

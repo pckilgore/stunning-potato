@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/web-manifest-combined.json",
-  "name": "Clouty Trading Platform",
-  "short_name": "Clouty",
-  "description": "At the intersection of music and finance, Clouty turns real-time music data into tradeable indexes. Whether you are a fan, artist, marketer or investor, there is a place for you at the table.",
+  "name": "app Trading Platform",
+  "short_name": "app",
+  "description": "At the intersection of music and finance, app turns real-time music data into tradeable indexes. Whether you are a fan, artist, marketer or investor, there is a place for you at the table.",
   "categories": [
     "finance",
     "entertainment",

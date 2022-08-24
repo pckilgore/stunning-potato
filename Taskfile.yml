@@ -2,7 +2,7 @@ version: "3"
 
 env:
   AWS_REGION: us-east-1
-  AWS_ENV_BUCKET: clouty-environments
+  AWS_ENV_BUCKET: app-environments
   PROJECT_NAME: web
   MISSING_TARGET_ENV_MSG: forgot to pass -- TARGET_ENV to cmd
 

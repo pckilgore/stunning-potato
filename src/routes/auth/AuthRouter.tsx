@@ -75,7 +75,7 @@ export default function AuthRouter() {
             Right={<Register />}
             Heading={
               <TwoToneHeading
-                primary="Welcome to Clouty! Great time"
+                primary="Welcome to app! Great time"
                 secondary="to create a profile"
               />
             }
@@ -100,7 +100,7 @@ export default function AuthRouter() {
             Right={<RegisterSuccess />}
             Heading={
               <TwoToneHeading
-                primary="Welcome to Clouty! Great time"
+                primary="Welcome to app! Great time"
                 secondary="to be confirmed"
               />
             }

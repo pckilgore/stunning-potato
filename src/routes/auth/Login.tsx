@@ -105,7 +105,7 @@ export function Login() {
                   variant="body-small"
                   color="text-dark-gray-600"
                 >
-                  New to Clouty?
+                  New to app?
                 </Text>
                 <Button variant="tiny" onClick={actions.requestRegistration}>
                   Sign Up
