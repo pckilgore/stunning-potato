@@ -24,7 +24,7 @@
     "@sentry/react": "^7.8.0",
     "@sentry/tracing": "^7.8.0",
     "@xstate/inspect": "^0.7.0",
-    "@xstate/react": "^3.0.0",
+    "@xstate/react": "^3.0.1",
     "clsx": "^1.2.1",
     "date-fns": "^2.29.1",
     "eslint-plugin-jsx-a11y": "^6.6.1",
