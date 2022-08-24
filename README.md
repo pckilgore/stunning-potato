@@ -1,7 +1,5 @@
 # Web
 
-Clouty core trading web application.
-
 ## Quickstart 
 
 Scripting is automated via `taskfile.yml`. A successful `task init` command should be
